@@ -1,6 +1,9 @@
 #!/bin/sh
 
-[ -f "run-ss-redir" ] || ( echo "This script ('run-ss-redir') must be run in the direcory containing it"; exit 1 )
+if [ ! -f "run-ss-redir" ]; then
+  echo "This script ('run-ss-redir') must be run in the direcory containing it"
+  exit 1
+fi
 . ./param.env
 
 ENABLED=yes

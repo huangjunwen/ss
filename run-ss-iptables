@@ -1,6 +1,9 @@
 #!/bin/sh
 
-[ -f "run-ss-iptables" ] || ( echo "This script ('run-ss-iptables') must be run in the direcory containing it"; exit 1 )
+if [ ! -f "run-ss-iptables" ]; then
+  echo "This script ('run-ss-iptables') must be run in the direcory containing it"
+  exit 1
+fi
 . ./param.env
 
 SS_CHAIN=SS
