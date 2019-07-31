@@ -1,0 +1,6 @@
+{
+    "password":"xxxxxxx",
+    "timeout":60,
+    "method":"aes-256-cfb"
+}
+

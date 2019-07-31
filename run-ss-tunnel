@@ -1,0 +1,15 @@
+#!/bin/sh
+
+[ -f "run-ss-tunnel" ] || ( echo "This script ('run-ss-tunnel') must be run in the direcory containing it"; exit 1 )
+. ./param.env
+
+ENABLED=yes
+PROCS=ss-tunnel
+ARGS="-c ./shadowsocks.json -s ${SS_SERVER_HOST} -p ${SS_SERVER_PORT} -b 0.0.0.0 -l ${SS_TUNNEL_LOCAL_PORT} -L 8.8.4.4:53 -u"
+PREARGS=""
+DESC=$PROCS
+PATH=/opt/sbin:/opt/bin:/opt/usr/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+[ -z "$(which $PROCS)" ] && exit 0
+
+. ./rc.func

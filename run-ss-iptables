@@ -1,0 +1,85 @@
+#!/bin/sh
+
+[ -f "run-ss-iptables" ] || ( echo "This script ('run-ss-iptables') must be run in the direcory containing it"; exit 1 )
+. ./param.env
+
+SS_CHAIN=SS
+SS_WL_CHAIN=SS_WL
+
+start() {
+  echo "Adding iptable rules for shadowsocks..."
+  # Create new chains
+  iptables -t nat -N ${SS_CHAIN}
+  iptables -t nat -N ${SS_WL_CHAIN}
+
+  # Ignore your shadowsocks server-s's addresses
+  # It's very IMPORTANT, just be careful
+  iptables -t nat -A ${SS_CHAIN} -d "${SS_SERVER_HOST}" -j RETURN
+
+  # Ignore LANs to bypass the proxy
+  # See Wikipedia and RFC5735 for full list of reserved networks.
+  iptables -t nat -A ${SS_CHAIN} -d 0.0.0.0/8 -j RETURN
+  iptables -t nat -A ${SS_CHAIN} -d 10.0.0.0/8 -j RETURN
+  iptables -t nat -A ${SS_CHAIN} -d 127.0.0.0/8 -j RETURN
+  iptables -t nat -A ${SS_CHAIN} -d 169.254.0.0/16 -j RETURN
+  iptables -t nat -A ${SS_CHAIN} -d 172.16.0.0/12 -j RETURN
+  iptables -t nat -A ${SS_CHAIN} -d 192.168.0.0/16 -j RETURN
+  iptables -t nat -A ${SS_CHAIN} -d 224.0.0.0/4 -j RETURN
+  iptables -t nat -A ${SS_CHAIN} -d 240.0.0.0/4 -j RETURN
+
+  # Ignore custom IPs
+  for ip in `cat ./ips/ip_custom.txt`;
+  do
+    iptables -t nat -A ${SS_CHAIN} -d "${ip}" -j RETURN
+  done
+
+  # for Chrome youtube
+  iptables -t nat -A ${SS_CHAIN} -p udp --dport 443 -j REDIRECT --to-ports ${SS_REDIR_LOCAL_PORT}
+
+  # Check whitelist
+  iptables -t nat -A ${SS_CHAIN} -j ${SS_WL_CHAIN}
+  iptables -t nat -A ${SS_CHAIN} -m mark --mark 1 -j RETURN
+
+  # Anything else should redirect to shadowsocks' local port
+  iptables -t nat -A ${SS_CHAIN} -p tcp -j REDIRECT --to-ports ${SS_REDIR_LOCAL_PORT}
+
+  # Apply
+  iptables -t nat -A PREROUTING -p tcp -j ${SS_CHAIN}
+
+  # Ignore Asia IP address
+  for ip in `cat ./ips/ip_asia.txt`;
+  do
+      iptables -t nat -A ${SS_WL_CHAIN} -d "${ip}" -j MARK --set-mark 1
+  done
+}
+
+stop() {
+  echo "Removing iptable rules for shadowsocks..."
+  # Delete the rule inserted in PREROUTING chain
+  iptables -t nat -D PREROUTING -p tcp -j ${SS_CHAIN}
+
+  # Flush all rules in the two chains
+  iptables -t nat -F ${SS_CHAIN}
+  iptables -t nat -F ${SS_WL_CHAIN}
+
+  # Delete the two chains
+  iptables -t nat -X ${SS_CHAIN}
+  iptables -t nat -X ${SS_WL_CHAIN}
+}
+
+exists() {
+  iptables -t nat -L ${SS_CHAIN} -n > /dev/null 2>&1
+}
+
+case $1 in
+  start)
+    exists && stop
+    start
+    ;;
+  stop)
+    exists && stop
+    ;;
+  *)
+    echo "Usage: run-ss-iptable start|stop"
+    ;;
+esac

@@ -1,0 +1,16 @@
+#!/bin/sh
+
+[ -f "run-ss-redir" ] || ( echo "This script ('run-ss-redir') must be run in the direcory containing it"; exit 1 )
+. ./param.env
+
+ENABLED=yes
+PROCS=ss-redir
+ARGS="-c ./shadowsocks.json -s ${SS_SERVER_HOST} -p ${SS_SERVER_PORT} -b 0.0.0.0 -l ${SS_REDIR_LOCAL_PORT} -u"
+PREARGS=""
+DESC=$PROCS
+PATH=/opt/sbin:/opt/bin:/opt/usr/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+[ -z "$(which $PROCS)" ] && exit 0
+
+. ./rc.func
+
