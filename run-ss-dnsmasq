@@ -9,11 +9,15 @@ fi
 case $1 in
   start)
     echo "server=/#/127.0.0.1#${SS_TUNNEL_LOCAL_PORT}" > ./dnsmasq.d/gfwlist.conf
-    service dnsmasq restart
+    stopservice dnsmasq
+    startservice dnsmasq
+    #service dnsmasq restart
     ;;
   stop)
     echo "server=/#/114.114.114.114" > ./dnsmasq.d/gfwlist.conf
-    service dnsmasq restart
+    stopservice dnsmasq
+    startservice dnsmasq
+    #service dnsmasq restart
     ;;
   *)
     echo "Usage: run-ss-dnsmasq start|stop"

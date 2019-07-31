@@ -1,6 +1,7 @@
 ## Prerequisite
 
-- dnsmasq installed
+- DD-WRT firmware
+- dnsmasq enabled
 - ss-tunnel/ss-redir installed
 
 ## Install
