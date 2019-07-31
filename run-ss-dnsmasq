@@ -1,0 +1,21 @@
+#!/bin/sh
+
+if [ ! -f "run-ss-dnsmasq" ]; then
+  echo "This script ('run-ss-dnsmasq') must be run in the direcory containing it"
+  exit 1
+fi
+. ./param.env
+
+case $1 in
+  start)
+    echo "server=/#/127.0.0.1#${SS_TUNNEL_LOCAL_PORT}" > ./dnsmasq.d/gfwlist.conf
+    service dnsmasq restart
+    ;;
+  stop)
+    echo "server=/#/114.114.114.114" > ./dnsmasq.d/gfwlist.conf
+    service dnsmasq restart
+    ;;
+  *)
+    echo "Usage: run-ss-dnsmasq start|stop"
+    ;;
+esac
