@@ -19,7 +19,7 @@
 
 `dnsmasq.d` contains configurations to decide which domains are using direct DNS (114.114.114.114), otherwise `ss-tunnel`.
 
-If the resolved ip is an asia ip, then connect to it directly, otherwise `ss-redir`. This is done by some iptables rules.
+If the resolved ip is an [APNIC](https://www.apnic.net/) ip, then connect to it directly, otherwise `ss-redir`. This is done by some iptables rules.
 
 ## Credit/Reference
 
@@ -27,3 +27,5 @@ If the resolved ip is an asia ip, then connect to it directly, otherwise `ss-red
 - https://github.com/Entware/Entware/wiki/How-to-add-a-new-package
 - https://github.com/softwaredownload/openwrt-fanqiang
 - https://www.awsomejiang.com/2018/08/10/Tomato-with-shadowsocks-libev-Automatic-proxy-for-your-router/
+- https://www.iana.org/assignments/ipv4-address-space/ipv4-address-space.xhtml
+- https://www.apnic.net/manage-ip/manage-resources/address-status/apnic-resource-range/
