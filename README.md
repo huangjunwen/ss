@@ -13,7 +13,15 @@
 5. Edit `shadowsocks.json` to fill password and encrypt method
 6. Run `run-ss-dnsmasq`/`run-ss-iptables`/`run-ss-tunnel`/`run-ss-redir` `start|stop` inside `</path/to/ss>`
 
-## Reference
+## How it works
+
+`ss-tunnel` is mainly used for DNS and `ss-redir` as transparent proxy.
+
+`dnsmasq.d` contains configurations to decide which domains are using direct DNS (114.114.114.114), otherwise `ss-tunnel`.
+
+If the resolved ip is an asia ip, then connect to it directly, otherwise `ss-redir`. This is done by some iptables rules.
+
+## Credit/Reference
 
 - https://github.com/Entware/Entware/wiki/Alternative-install-vs-standard
 - https://github.com/Entware/Entware/wiki/How-to-add-a-new-package
